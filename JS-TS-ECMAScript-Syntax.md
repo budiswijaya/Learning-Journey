@@ -14,6 +14,11 @@
   - [Type Conversion](#type-conversion)
   - [`Math` Operations](#math-operations)
   - [JSON](#json)
+- [RegEx - Regular Expressions](#regex---regular-expressions)
+  - [Grammar (literal syntax)](#grammar-literal-syntax)
+  - [Constructs (what JavaScript builds from it)](#constructs-what-javascript-builds-from-it)
+  - [Semantics (what it means; runtime behavior)](#semantics-what-it-means-runtime-behavior)
+  - [Example of markdown converter](#example-of-markdown-converter)
 - [Operator](#operator)
   - [Arithmetic Operators](#arithmetic-operators)
   - [Assignment Operators](#assignment-operators)
@@ -973,6 +978,519 @@ isAdmin: true
 
 //This allows you to work with the data in your program as a normal JavaScript object, making it easier to manipulate and use.
 ```
+
+# RegEx - Regular Expressions
+
+A Regular Expression in JavaScript is:
+
+- A built-in object type, named RegExp
+- A literal grammar form, similar to how object literals ({}) or array literals ([]) exist
+- A mini-language inside JavaScript, with its own syntax rules
+- A pattern-matching engine, used mostly with strings
+
+## Grammar (literal syntax)
+
+Regex has a literal form defined directly in ECMAScript grammar:
+
+```
+RegularExpressionLiteral ::
+    / RegularExpressionBody / RegularExpressionFlags
+```
+
+RegularExpressionBody
+
+This is the pattern:
+
+```
+/hello/
+```
+
+RegularExpressionFlags
+
+These are modifiers:
+
+```
+/hello/g
+/hello/gi
+```
+
+Visualization — regex literal as a syntactic box
+
+```
+╔═════════════════════════════╗
+║   / pattern goes here / g i  ║
+╚═════════════════════════════╝
+     ^ body         ^ flags
+```
+
+Example
+
+```
+/[a-z]+/gi
+```
+
+Grammar role:
+
+- / opens literal
+
+  They are the container that JavaScript uses to define a RegExp literal.
+
+- [a-z]+ is the pattern
+- /g or /gi are flags
+
+  - The g (global) flag ensures that the pattern matches all occurrences in the text, rather than stopping after the first match.
+  - The i (case-insensitive) flag ensures that the pattern matches occurrences regardless of their case.
+
+## Constructs (what JavaScript builds from it)
+
+Regex is not just grammar—it constructs a RegExp object at runtime.
+
+Two ways exist:
+
+(A) Constructor Form
+
+```js
+const r = new RegExp("hello", "gi");
+```
+
+(B) Literal Form
+
+```js
+const r = /hello/gi;
+```
+
+Literal has special lexer behavior:
+
+- it avoids string escaping hell
+- it is compiled at parse time
+- it is faster for static patterns
+
+Constructor shines for dynamic patterns:
+
+```js
+const word = "cat";
+new RegExp(word + "s$", "i");
+```
+
+Visualization — object construction
+
+```
+Source code
+   → pattern literal "/hello/gi"
+   → RegExp object { source: "hello", flags: "gi" }
+   → used by string methods
+```
+
+## Semantics (what it means; runtime behavior)
+
+Regex semantics answer: How does JavaScript interpret this pattern?
+
+ECMAScript defines semantics around:
+
+- Pattern atoms (literal characters, char classes, groups)
+- Quantifiers (`+`, `*`, `{m,n}`)
+- Anchors (`^`, `$`)
+- Escape rules
+- Unicode behavior
+- How matching interacts with strings
+- Stateful `lastIndex` behavior
+
+Let’s break these into beginner-friendly categories:
+
+Pattern Meaning (Examples)
+
+- Character match
+
+  ```
+  /cat/
+  ```
+
+  Matches the literal "cat".
+
+- Character classes
+
+  ```
+  /[0-9]/    → any digit
+  /[a-z]/i   → any letter
+  /[^a-z]/   → anything NOT a letter
+  ```
+
+- Quantifiers
+
+  ```
+  /a+/   → one or more a's
+  /b*/   → zero or more b's
+  /c{2,4}/ → between 2 and 4 c's
+  ```
+
+- Special Tokens
+
+  ```
+  \d → digit
+  \w → word character
+  \s → whitespace
+  .  → any char (except newline by default)
+
+  .+ → match ANY characters as long as there is at least one of them
+  Example: In "apple" and "banana", .+ finds a match. In "", it finds nothing.
+
+  .* → match ANY characters include empty string
+  Example: In the strings "apple", "banana", or "", .* finds a match in all three.
+  ```
+
+- Anchors
+
+  ```
+  ^hello  → must start with "hello"
+  world$ → must end with "world"
+  ```
+
+- Groups
+
+  ```
+  (abc)           → Group these characters, capture them
+  (?:abc)         → Group these characters, but do not capture them
+  (?<name>abc)    → named capturing group
+
+  Why?
+  Parentheses normally do two things:
+  - Group behavior
+  - Capture a memory slot (so you can refer to it later with \1, \2,
+  etc.)
+
+  ( ... )   = group AND remember
+  (?: ... ) = group but DO NOT remember
+  ```
+
+- "OR" condition
+
+  ```
+  ** OR __
+  ```
+
+  Regex sees:
+
+  ```
+  (\*\*|__)
+    group1 = either "**" or "__"
+  ```
+
+Visualization — how regex scans a string
+
+Using /cat/ against "the cat sat":
+
+```
+the cat sat
+    ^^^
+   match
+```
+
+Regex engine moves left to right:
+
+```
+t → h → e → (space) → c → a → t → match
+```
+
+## Example of markdown converter
+
+| Markdown                           | HTML                                      | Preview                                 |
+| ---------------------------------- | ----------------------------------------- | --------------------------------------- |
+| `# heading 1`                      | `<h1>heading 1</h1>`                      | <h1>heading 1</h1>                      |
+| `## heading 2`                     | `<h2>heading 2</h2>`                      | <h2>heading 2</h2>                      |
+| `### heading 3`                    | `<h3>heading 3</h3>`                      | <h3>heading 3</h3>                      |
+| `**bold text**` or `__bold text__` | `<strong>bold text</strong>`              | <strong>bold text</strong>              |
+| `*italic text*` or `_italic text_` | `<em>italic text</em>`                    | <em>italic text</em>                    |
+| `![alt-text](image-source)`        | `<img alt="alt-text" src="image-source">` | <img alt="alt-text" src="image-source"> |
+| `[link text](URL)`                 | `<a href="URL">link text</a>`             | <a href="URL">link text</a>             |
+| `> quote`                          | `<blockquote>quote</blockquote>`          | <blockquote>quote</blockquote>          |
+
+```js
+.replace(/(?:^|\n)### (.+)/g, "<h3>$1</h3>") // heading 3
+.replace(/(?:^|\n)## (.+)/g, "<h2>$1</h2>") // heading 2
+.replace(/(?:^|\n)# (.+)/g, "<h1>$1</h1>") // heading 1
+.replace(/(\*\*|__)(.+)\1/g, "<strong>$2</strong>") // bold
+.replace(/(\*|_)(.+)\1/g, "<em>$2</em>") // italic
+.replace(/!\[(.+?)\]\((.+)\)/g, "<img alt=\"$1\" src=\"$2\">") // images
+.replace(/\[(.+?)\]\((.+)\)/g, "<a href=\"$2\">$1</a>") // links
+.replace(/(?:^|\n)> (.+)/g, "<blockquote>$1</blockquote>"); // blockquotes
+```
+
+1.  Headings
+    Pattern:
+
+    ```js
+    /(?:^|\n)### (.+)/g;
+    ```
+
+    Replacement:
+
+    ```js
+    <h3>$1</h3>
+    ```
+
+    Grammar Breakdown (literal → meta)
+
+    ```
+    (?:^|\n)### (.+)
+    └────┬──┘ └──┬──┘
+      non-capture   capture group #1 (content)
+    ```
+
+    Constructs
+
+    - `(?: ... )`
+      A non-capturing group. You group but don’t remember.
+    - `^ | \n`
+      Match start of string OR a newline.
+      This ensures headings only match at the beginning of a line.
+
+    - `###`
+      Literal: three hashes and a space. Markdown H3.
+
+    - `(.+)`
+      Match one or more characters, capture them as $1.
+
+    Semantics (how the regex behaves)
+
+    For input like:
+
+    ```
+    ### Hello World
+    ```
+
+    Engine scans line by line.
+
+    Visualization:
+
+    ```
+    [START] ### Hello World
+    ^----- matches ^ (start)
+          ### ---- literal
+              Hello World ---- captured as (.+)
+    ```
+
+    So replacement becomes:
+
+    ```js
+    <h3>Hello World</h3>
+    ```
+
+    Same idea applies to H2 and H1:
+
+    ```js
+    (?:^|\n)## (.+)  → <h2>
+    (?:^|\n)# (.+)   → <h1>
+    ```
+
+    The grammar is identical; only hash count changes.
+
+2.  Bold Text (strong)
+    Pattern:
+
+    ```js
+    /(\*\*|__)(.+)\1/g;
+    ```
+
+    Replacement:
+
+    ```js
+    <strong>$2</strong>
+    ```
+
+    Grammar Breakdown
+
+    ```
+    (\*\*|__) (.+) \1
+      │       │    └ repeat the same opening symbol
+      │       └ capture the content
+      └ capture the opening symbol (** or __)
+    ```
+
+    Constructs
+
+    - `(\*\*|__)`
+      Capture group #1: either `**` or `__`.
+    - `(.+)`
+      Capture group #2: the bold text.
+    - `\1`
+      Match the exact same symbols matched in group #1.
+
+    Semantics
+
+    This ensures balanced markers:
+
+    ```js
+    **hello**   → uses group 1 = "**"
+    __world__   → uses group 1 = "__"
+    ```
+
+    Visualization:
+
+    ```
+    **   hello   **
+    │└──group1──┘│
+      └─group2─┘
+    ```
+
+    Replacement places only group2 inside `<strong>`.
+
+3.  Italic Text (emphasis)
+    Pattern:
+
+    ```js
+    /(\*|_)(.+)\1/g;
+    ```
+
+    This is identical to the strong version, but using `\*` or `\_` instead of `\*\*` or `\_\_`.
+
+    Grammar
+
+    ```js
+    (\*|_) (.+) \1
+    ```
+
+    Semantics:
+
+    ```
+    *emphasis*   or   _emphasis_
+    ```
+
+4.  Images
+    Pattern:
+
+    ```js
+    /!\[(.+?)\]\((.+)\)/g;
+    ```
+
+    Replacement:
+
+    ```js
+    <img alt="$1" src="$2">
+    ```
+
+    Grammar Breakdown
+
+    ```
+    ! \[ (.+?) \] \( (.+) \)
+      │    │       │     └ literal )
+      │    │       └ capture URL
+      │    └ capture alt-text (non-greedy)
+      └ literal !
+    ```
+
+    Constructs
+
+    - `!\[`
+      Literal start of Markdown image.
+    - `(.+?)`
+      “Lazy” capture of alt text.
+      +? = minimal matching, avoids swallowing too much.
+    - `\]`
+      Closing bracket.
+    - `\( and \)`
+      Literal parentheses for URL.
+    - `(.+)`
+      Capture the full image URL.
+
+    Semantics
+
+    Input:
+
+    ```
+    ![cat picture](cats.png)
+    ```
+
+    Visualization:
+
+    ```
+    ! [ cat picture ] ( cats.png )
+      └───$1───────┘   └──$2────┘
+    ```
+
+    Result:
+
+    ```js
+    <img alt="cat picture" src="cats.png">
+    ```
+
+5.  Links
+    Pattern:
+
+    ```
+    /\[(.+?)\]\((.+)\)/g
+    ```
+
+    This is the same as image but without the ! prefix.
+
+    Semantics
+
+    ```
+    [Google](https://google.com)
+    ```
+
+    Visualization:
+
+    ```
+    [ Google ] ( https://google.com )
+      └─$1──┘      └────$2────┘
+    ```
+
+    Result:
+
+    ```js
+    <a href="https://google.com">Google</a>
+    ```
+
+6.  Blockquotes
+    Pattern:
+
+    ```js
+    /(?:^|\n)> (.+)/g;
+    ```
+
+    Replacement:
+
+    ```js
+    <blockquote>$1</blockquote>
+    ```
+
+    Grammar Breakdown
+
+    ```js
+    (?:^|\n) > (.+)
+    ```
+
+    Constructs
+
+    - `(?:^|\n)`
+      Beginning-of-line requirement.
+    - `>`
+      Literal Markdown blockquote marker.
+    - `(.+)`
+      Capture quoted content.
+
+    Semantics
+
+    Input:
+
+    ```
+    > wisdom is kinda heavy
+    ```
+
+    Visualization:
+
+    ```
+    [START]> wisdom is kinda heavy
+    ^---- match start-of-line group
+          > literal
+            wisdom is kinda heavy → group1
+    ```
+
+    Output:
+
+    ```
+    <blockquote>wisdom is kinda heavy</blockquote>
+    ```
 
 # Operator
 

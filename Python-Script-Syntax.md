@@ -59,7 +59,7 @@
 - [Asynchronous Python](#asynchronous-python)
   - [Coroutines: async def, await](#coroutines-async-def-await)
   - [Event Loop: asyncio.run()](#event-loop-asynciorun)
-  - [Tasks / Futures: asyncio.create_task, Future](#tasks--futures-asynciocreate_task-future)
+  - [Tasks / Futures: asyncio.create\_task, Future](#tasks--futures-asynciocreate_task-future)
   - [Async Iteration: async for, async with](#async-iteration-async-for-async-with)
 - [Modules \& Imports](#modules--imports)
   - [Import Variants: import, from ... import ..., import as](#import-variants-import-from--import--import-as)
