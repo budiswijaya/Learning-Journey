@@ -8,6 +8,6 @@ My learning is guided by logic, clarity, and visionary output thinking.
 I document my journey to sharpen my system thinking, stay organized, and transform curiosity into meaningful outcomes, relentless problem solver.
 
 <img
-    src="Learning Journey.png"
-    alt="Learning Journey"
+src="https://raw.githubusercontent.com/budiswijaya/Learning-Journey/main/Learning-Journey.png"
+alt="Learning Journey"
 />
