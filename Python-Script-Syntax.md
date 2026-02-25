@@ -34,7 +34,7 @@
   - [Dict Methods](#dict-methods)
   - [Set Methods](#set-methods)
   - [Object Orientation](#object-orientation)
-  - [Data Model Hooks](#data-model-hooks)
+  - [Data Model Hooks (Dunder)](#data-model-hooks-dunder)
 - [Control Flow](#control-flow)
   - [if/elif/else](#ifelifelse)
   - [match / case (Python 3.10+)](#match--case-python-310)
@@ -59,7 +59,7 @@
 - [Asynchronous Python](#asynchronous-python)
   - [Coroutines: async def, await](#coroutines-async-def-await)
   - [Event Loop: asyncio.run()](#event-loop-asynciorun)
-  - [Tasks / Futures: asyncio.create\_task, Future](#tasks--futures-asynciocreate_task-future)
+  - [Tasks / Futures: asyncio.create_task, Future](#tasks--futures-asynciocreate_task-future)
   - [Async Iteration: async for, async with](#async-iteration-async-for-async-with)
 - [Modules \& Imports](#modules--imports)
   - [Import Variants: import, from ... import ..., import as](#import-variants-import-from--import--import-as)
@@ -727,7 +727,6 @@ A non-primitive value is a box that points to another box, like a label that say
   ```
 
   Why both behave the same:
-
   - Both numbers are primitive.
   - When you assign y = x, you copy the value, not a pointer.
   - Changing y does not affect x, because they’re separate values in memory.
@@ -759,13 +758,11 @@ A non-primitive value is a box that points to another box, like a label that say
   ```
 
   Why both behave the same again—but differently from primitives:
-
   - Arrays (JS) and lists (Python) are non-primitive — stored by reference.
   - b = a doesn’t make a new copy; it makes a new label pointing to the same list in memory.
   - When you modify b, you’re really modifying the shared data both labels point to.
 
   If you want a separate copy, you must do it explicitly:
-
   - JS: let b = a.slice();
   - Python: b = a.copy() or b = a[:]
 
@@ -794,7 +791,6 @@ A non-primitive value is a box that points to another box, like a label that say
   ```
 
   Explanation:
-
   - Strings look like objects, but they’re immutable primitives.
   - When you assign or “change” them, you’re not editing the same string — you’re creating a new one.
   - So even though "hello" is an object in Python, it behaves like a primitive.
@@ -902,7 +898,6 @@ A non-primitive value is a box that points to another box, like a label that say
   That number is not random — it’s usually the memory address where the object lives (on CPython, the default Python implementation).
 
   So:
-
   - Each new object gets its own unique id.
   - When an object is destroyed (garbage-collected), that id can be reused later for something else.
 
@@ -965,7 +960,6 @@ A non-primitive value is a box that points to another box, like a label that say
   Strings are immutable, so modifying them doesn’t alter the original object — it creates a new one.
 
   🔍 Why `id()` Matters
-
   - It’s a quick way to check whether two names refer to the same object.
   - It helps explain mutability and reference behavior.
   - It can reveal optimizations (like integer or string interning).
@@ -2732,7 +2726,6 @@ arr = [1, 2, 3] # ✅ Preferred
 - String Methods
 
   Python provides a number of built-in methods that make working with strings a breeze. They include, but are not limited to, the following:
-
   - `upper()`: Returns a new string with all characters converted to uppercase.
     my_str = 'hello world'
 
@@ -3102,7 +3095,7 @@ p1.greet()  # Hello, my name is Alice.
 Summary
 Classes encapsulate data (attributes) and behavior (methods) — enabling reusable, modular code.
 
-## Data Model Hooks
+## Data Model Hooks (Dunder)
 
 Definition
 Python allows you to customize how objects behave with built-in functions (like `print()`, `len()`, `iter()`, etc.) by implementing special methods (dunder methods).
@@ -3595,7 +3588,6 @@ These three — `enumerate()`, `zip()`, and `range()` — are the cornerstones o
   ```
 
   Key notes:
-
   - range() excludes the stop value (range(0, 5) → 0–4).
   - step can be negative for reverse iteration.
   - It’s memory-efficient (doesn’t store all numbers).
@@ -3669,7 +3661,6 @@ These three — `enumerate()`, `zip()`, and `range()` — are the cornerstones o
   ```
 
   Why use it:
-
   - Keeps your loop Pythonic — no manual range(len(...)).
   - Works with any iterable (lists, tuples, sets, etc.).
   - Optional start argument:
@@ -3733,7 +3724,6 @@ These three — `enumerate()`, `zip()`, and `range()` — are the cornerstones o
   ```
 
   Key Notes:
-
   - Stops at the shortest iterable.
     ```py
     zip([1, 2], [10, 20, 30]) # → (1,10), (2,20)
@@ -3857,7 +3847,6 @@ These three — `enumerate()`, `zip()`, and `range()` — are the cornerstones o
    ```
 
    🧠 Explanation:
-
    - Outer variable preserves results for early-exit searches.
    - Stateless generator expressions like `any()` or `next()` are cleaner when no persistence needed.
 
