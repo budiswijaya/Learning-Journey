@@ -2687,13 +2687,6 @@ arr = [1, 2, 3] # ✅ Preferred
   animals.append("cows")
   print(animals) # ['pigs', 'goats', 'cows']
 
-  # .remove()
-
-  plants = ["broccoli", "cauliflower", "kale"]
-  removed = plants.pop() # remove last
-  print(plants) # ['broccoli', 'cauliflower']
-  print(removed) # 'kale'
-
   # .pop()
 
   arr = [1, 2, 3]
